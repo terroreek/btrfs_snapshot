@@ -1,0 +1,46 @@
+#!/bin/bash
+#Assumptions you have mounted either manually or in the fstab the partitions that contain the your root and home subvolumes
+#path to your root subvolume
+ROOTSUB=/mnt/btrfs_root/@
+#path to your home subvolume
+HOMESUB=/mnt/btrfs_home/@home
+#todays date
+NOW=$(date +"%d-%m-%Y")
+
+#check if this is being run as root
+
+if [ "$UID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+#begin snapshoting btrfs subvolumes
+echo "Snapshoting btrfs subvolumes"
+echo "Creating / snapshot $ROOTSUB-snapshot-$NOW"
+
+if [ -d "$ROOTSUB-snapshot-$NOW" ]
+   then echo "Snapshot for  / today already exists, exiting please manually snapshot subvolumes"
+   exit
+fi
+
+btrfs subvolume snapshot $ROOTSUB $ROOTSUB-snapshot-$NOW
+
+echo "Done"
+echo "Creating /home snapshot $HOMESUB-snapshot-$NOW"
+
+if [ -d "$HOMESUB-snapshot-$NOW" ]
+   then echo "Snapshot /home for today already exists, exiting please manually snapshot subvolumes"
+   exit
+fi
+
+btrfs subvolume snapshot $HOMESUB $HOMESUB-snapshot-$NOW
+echo "Done"
+
+# Checking if you are running at multi-user target (init3)
+STATUS=$(systemctl status graphical.target | grep dead)
+if [ -z "$STATUS" ]
+   then echo "Please run the command 'systemctl isolate multi-user.target' as root or sudo, before attempting to update."
+   exit
+fi
+echo "You are ready to update please review updates prior to accepting updates"
+
