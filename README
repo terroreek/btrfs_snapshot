@@ -1,0 +1,1 @@
+This is a script used to automatically snapshot your root and home subvolumes prior to dist-upgrades.
