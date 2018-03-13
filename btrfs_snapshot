@@ -5,7 +5,7 @@ ROOTSUB=/mnt/btrfs_root/@
 #path to your home subvolume
 HOMESUB=/mnt/btrfs_home/@home
 #todays date
-NOW=$(date +"%d-%m-%Y")
+NOW=$(date +"%Y-%m-%d")
 
 #check if this is being run as root
 
