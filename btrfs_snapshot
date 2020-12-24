@@ -4,6 +4,8 @@
 ROOTSUB=/mnt/btrfs_root/@
 #path to your home subvolume
 HOMESUB=/mnt/btrfs_home/@home
+#path to your game sub
+MEDIASUB=/mnt/btrfs_media/@media
 #todays date
 NOW=$(date +"%Y-%m-%d")
 
@@ -35,6 +37,16 @@ fi
 
 btrfs subvolume snapshot $HOMESUB $HOMESUB-snapshot-$NOW
 echo "Done"
+echo "Creating media snapshot $MEDIASUB-snapshot-$NOW"
+
+if [ -d "$MEDIASUB-snapshot-$NOW" ]
+   then echo "Snapshot /home/media for today already exists, exiting please manually snapshot subvolumes"
+   exit
+fi
+
+btrfs subvolume snapshot $MEDIASUB $MEDIASUB-snapshot-$NOW
+echo "Done"
+
 
 # Checking if you are running at multi-user target (init3)
 STATUS=$(systemctl status graphical.target | grep dead)
